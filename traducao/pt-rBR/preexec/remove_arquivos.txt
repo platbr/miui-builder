@@ -1,1 +1,1 @@
-original/data/preinstall_apps/Baiduinput.apk
+original/data/preinstall_apps/*.apk

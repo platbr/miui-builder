@@ -7,3 +7,4 @@ then
 		rm -fr $PATHB/$FILE
 	done
 fi
+touch $PATHB/original/data/preinstall_apps/preinstall_apps

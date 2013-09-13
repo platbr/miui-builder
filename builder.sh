@@ -1,36 +1,39 @@
 LOCALES="af|am|ar|be|bg|ca|cs|da|de|el|en|it|en-rGB|es|es-rUS|et|fa|fi|fr|hi|hr|hu|in|iw|ja|ko|lt|lv|ms|nb|nl|pl|pt|pt-rPT|pt-rBR|ro|ru|sk|sl|sr|sv|sw|th|tl|tr|uk|vi|zh-rCN|zh-rTW|zu"
 export MIUIB=`pwd`
 export NOMEPROJ=miui_3.9.6_wagner
-export PATHP=${MIUIB}/projetos/${NOMEPROJ}
-export FRAMEWORKP=$PATHP/frameworks
+export PATHB=${MIUIB}/projetos/${NOMEPROJ}
+export FRAMEWORKP=$PATHB/frameworks
 
-rm -fr $PATHP/unpacked
-rm -fr $PATHP/frameworks
-rm -f $PATHP/error.log
-mkdir -p $FRAMEWORKP $PATHP
+rm -fr $PATHB/unpacked
+rm -fr $PATHB/frameworks
+rm -f $PATHB/error.log
+mkdir -p $FRAMEWORKP $PATHB
 
 APKUNPACK ()
 {
-	${MIUIB}/tools/apktool d -f --frame-path $FRAMEWORKP $1 $2 
+	#${MIUIB}/tools/apktool d -s -f --frame-path $FRAMEWORKP $1 $2 
+	${MIUIB}/tools/apktool d $1 $2 
 	if [ $? -ne 0 ]
 	then
-		echo APKUNPACK ERROR: $1 >> $PATHP/error.log
+		echo APKUNPACK ERROR: $1 >> $PATHB/error.log
 	fi
 }
 
 echo ---
 echo Rom inicial: $1
-if [ ! -d $PATHP/original ]
+if [ ! -d $PATHB/original ]
 then
-	unzip $1 -d $PATHP/original
+	unzip $1 -d $PATHB/original
 else
-	echo Ja existe: $PATHP
+	echo Ja existe: $PATHB
 fi
 echo ----
 echo Instalando frameworks para decoding...
-for FILE in $PATHP/original/system/framework/*.apk
+for FILE in $PATHB/original/system/framework/*.apk
 do
-	${MIUIB}/tools/apktool if $FILE --frame-path $FRAMEWORKP
+#	${MIUIB}/tools/apktool if $FILE --frame-path $FRAMEWORKP
+	${MIUIB}/tools/apktool if $FILE
+
 done
 echo ---
 echo Executando preexec...
@@ -41,7 +44,7 @@ do
 done
 echo ---
 echo Desempacotando APKS...
-for FILE in $(find $PATHP/original/ -type f -iname "*.apk")
+for FILE in $(find $PATHB/original/ -type f -iname "*.apk")
 do
 	echo $FILE
 	DFILE=$(echo $FILE | sed 's/\/original\//\/unpacked\//g')
@@ -55,7 +58,7 @@ do
 		then
 			cp -R $MIUIB/traducao/$(basename $LOCALE)/main/$(basename $FILE)/* $DFILE
 		else
-			echo "ERROR: $(basename $FILE) SEM TRADUCAO"  >> $PATHP/error.log
+			echo "ERROR: $(basename $FILE) SEM TRADUCAO"  >> $PATHB/error.log
 		fi
 	done
 	echo Procurando strings existentes...
